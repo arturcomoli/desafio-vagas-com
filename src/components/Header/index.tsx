@@ -4,10 +4,11 @@ const Header = () => {
       className="w-full px-6 py-9 h-[187px] bg-logo bg-cover bg-no-repeat
     bg-center-right"
     >
-      <h1 className="w-1/3 text-white font-test-font text-2xl">
-        Formulário para compra de{" "}
+      <div className="w-full text-white font-test-font text-2xl leading-8">
+        <p>Formulário</p>
+        <p>para compra de</p>
         <span className="font-bold">Pacote de Stickers</span>
-      </h1>
+      </div>
     </header>
   );
 };

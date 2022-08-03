@@ -12,6 +12,9 @@ module.exports = {
         "light-err": "#F59393",
         "str-err": "#F33232",
         "grey-bg": "#f2f2f2",
+        "dark-grey": "#071723",
+        "textarea-bg": "#dde3e9",
+        "green-success": "#00c57c",
       },
       fontFamily: {
         "test-font": "Inter, sans-serif",
@@ -24,5 +27,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
