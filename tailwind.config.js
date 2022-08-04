@@ -20,7 +20,7 @@ module.exports = {
         "test-font": "Inter, sans-serif",
       },
       backgroundImage: {
-        logo: "url(./src/assets/header.png)",
+        logo: "url(./assets/header.png)",
       },
       backgroundPosition: {
         "center-right": "center right",

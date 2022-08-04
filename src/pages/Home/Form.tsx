@@ -105,7 +105,7 @@ const Form = () => {
             <Button
               type="button"
               square
-              disabled={stickersError}
+              disabled={Number(stickers) ? false : true}
               onClick={subSticker}
             >
               -
