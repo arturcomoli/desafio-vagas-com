@@ -1,4 +1,11 @@
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
 import useDidMountEffect from "../../hooks";
@@ -8,42 +15,54 @@ const Form = () => {
   const [stickersError, setStickersError] = useState<boolean>(false);
   const [choices, setChoices] = useState<string[]>([]);
   const [errorChoices, setErrorChoices] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   const handleStickersErrors = () => {
-    if (!+stickers) return setStickersError(true);
+    if (!+stickers) return setStickersError(() => true);
 
-    return setStickersError(false);
+    return setStickersError(() => false);
   };
 
   const handleChoicesError = () => {
-    if (!choices.length) return setErrorChoices(true);
+    if (!choices.length) return setErrorChoices(() => true);
 
-    return setErrorChoices(false);
+    return setErrorChoices(() => false);
   };
+
+  const addSticker = useCallback(() => {
+    setStickers((stickers) => `${Number(stickers) + 1}`);
+  }, [stickers]);
+
+  const subSticker = useCallback(() => {
+    if (Number(stickers) > 0)
+      setStickers((stickers) => `${Number(stickers) - 1}`);
+  }, [stickers]);
 
   const handleChoices = (e: ChangeEvent<HTMLInputElement>) => {
     if (choices.includes(e.target.value)) {
       const newChoices = choices.filter((item) => item !== e.target.value);
       return setChoices(newChoices);
     }
-    return setChoices([...choices, e.target.value]);
+    return setChoices((choices) => [...choices, e.target.value]);
   };
 
   const handleSubmit = (e: FormEvent<EventTarget>) => {
     e.preventDefault();
     handleStickersErrors();
     handleChoicesError();
-    console.log("oi");
+
+    if (stickers && choices.length) return setShowSuccess(() => true);
+
+    return setShowSuccess(() => false);
   };
 
   const deps = [choices, stickers];
 
   useDidMountEffect({ handleStickersErrors, handleChoicesError, deps });
 
-  // useEffect(() => {
-  //   if (didMount.current) handleChoicesError();
-  //   didMount.current = true;
-  // }, [choices]);
+  useEffect(() => {
+    if (errorChoices || stickersError) return setShowSuccess(() => false);
+  }, [errorChoices, stickersError]);
 
   return (
     <>
@@ -82,8 +101,13 @@ const Form = () => {
           <h2 className="mb-4 text-dark-grey text-lg font-test-font font-semibold">
             Quantos stickers de cada?
           </h2>
-          <div className="flex w-1/2 gap-2">
-            <Button type="button" square>
+          <div className="flex w-full gap-2 md:w-1/2">
+            <Button
+              type="button"
+              square
+              disabled={stickersError}
+              onClick={subSticker}
+            >
               -
             </Button>
             <input
@@ -98,7 +122,7 @@ const Form = () => {
                   : "bg-textarea-bg border-btn-blue"
               }`}
             />
-            <Button type="button" square>
+            <Button type="button" square onClick={addSticker}>
               +
             </Button>
           </div>
@@ -110,15 +134,26 @@ const Form = () => {
           <textarea
             rows={7}
             className="form-textarea w-full border-2 border-btn-blue 
-          bg-textarea-bg rounded-md"
+          bg-textarea-bg rounded-md text-dark-grey font-test-font p-4"
           />
         </div>
       </form>
-      <div className="flex justify-around items-center bg-textarea-bg py-8">
-        <p className="font-test-font text-lg text-green-success font-semibold">
-          Formulário enviado com sucesso
-        </p>
-        <Button form="sticker-form" type="submit">
+      <div
+        className={`flex 
+        ${showSuccess ? "justify-around" : "justify-end px-8"} 
+        items-center bg-textarea-bg py-8`}
+      >
+        {showSuccess && (
+          <p className="font-test-font text-lg text-green-success font-semibold">
+            Formulário enviado com sucesso
+          </p>
+        )}
+
+        <Button
+          form="sticker-form"
+          type="submit"
+          disabled={errorChoices || stickersError}
+        >
           ENVIAR
         </Button>
       </div>
